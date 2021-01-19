@@ -24,6 +24,16 @@ class Attaque :
     def __str__(self):
         return self.nom+"\n"+self.description
 
+def loicDessin(path) :
+    lignes=""
+    with open(path, 'r') as filin:
+        for ligne in filin:
+            lignes+=ligne
+    return lignes
+
+
+
+
 listeAppareil=[]
 
 def listeAppareilsDetectes() :
@@ -39,14 +49,17 @@ listeAppareil=listeAppareilsDetectes()
 
 listedesAttaquesAvecVersion=[]
 #Version 1.4
-attaque1_4__1=Attaque("DDOS","Surcharge le port Bluetooth de requetes",None)
+attaque1_4__1=Attaque("DOS","Surcharge le port Bluetooth de requetes par notre appareil",None)
 attaque1_4__2=Attaque("BlueSnarf","Espionne les échanges Bluetooth de l'appareil",None)
 attaques1_4 = AttaquesPossibles(1.4, [attaque1_4__1,attaque1_4__2])
 listedesAttaquesAvecVersion.append(attaques1_4)
 
 def Accueil() :
-    print("Bienvenue sur PINNOCHIO, votre outil permettant de controller les appareils Bluetooth comme des marionettes")
+    print("Bienvenue sur NUTCRACKER, votre outil permettant de controler les appareils Bluetooth comme des marionettes")
     #dessin Loïc
+    print("\n *************************************************************************************************************************** \n")
+    print(loicDessin("C:/Users/asus/Desktop/PTSIOS/ascii_art/ascii_art_nut.txt"))
+    print("\n *************************************************************************************************************************** \n")
     print("Ce logiciel va d'abord scanner l'environemment dans lequel vous êtes, (adresse Mac, version Bluetooth, type d'appareil)")
     print("Pour ensuite vous proposer une liste des appareils Bluetooth dans la zone")
     print("Vous pourrez alors choisir un des appareils, et une liste d'attaque sera alors affiché en fonction de sa version Bluetooth..")
@@ -56,7 +69,7 @@ def Accueil() :
     print("Veuilez choisir un des appareils ci dessus en mettant le numéro correspondant, exit pour sortir")
     w = input().replace(" ","")
     if w == "exit":
-        return
+        return None
     else:
         try:
             return listeAppareil[int(w) - 1]
@@ -103,6 +116,8 @@ def displayAttack (appareil) :
 
 def __main__() :
     appareilChoisi=Accueil()
+    if appareilChoisi==None :
+        return
     attaqueChoisi=displayAttack(appareilChoisi)
 
     confirmation(attaqueChoisi,appareilChoisi)
