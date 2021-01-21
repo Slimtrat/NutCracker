@@ -7,6 +7,7 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
 
     def pre_inquiry(self):
         self.done = False
+        self.devices=[]
 
     def device_discovered(self, address, device_class, rssi, name):
         sortie=[]
@@ -43,9 +44,8 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
 
         print("  RSSI:", rssi)
         sortie.append(rssi)
-
-        for i in range(len(sortie)) :
-            print(sortie[i])
+	if not sortie==[]:
+            devices.append(sortie)
 
     def inquiry_complete(self):
         self.done = True

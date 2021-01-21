@@ -1,3 +1,7 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+import os, sys
+
 class AttaquesPossibles :
     def __init__(self,versionBluetooth,attaquePossible):
         self.versionBluetooth=versionBluetooth #C'est un float, voir s'il faudrait un string plutot, par exemple plusieurs points
@@ -44,7 +48,10 @@ def loicDessin(path) :
 listeAppareil=[]
 
 def listeAppareilsDetectes() :
-    print("A terminer et a voir avec le groupe")
+    import scan_btle as sc
+    a= sc.MyDiscoverer()
+    for i in a.devices :
+    	print(i)
     return [Appareil("Telephone 1",1.4,"adresseMac","Tel",)]
 
 def lancementAttaque(attaque,appareil):
@@ -65,7 +72,7 @@ def Accueil() :
     print("Bienvenue sur NUTCRACKER, votre outil permettant de controler les appareils Bluetooth comme des marionettes")
     #dessin Loïc
     print("\n *************************************************************************************************************************** \n")
-    print(loicDessin("C:/Users/asus/Desktop/PTSIOS/ascii_art/ascii_art_nut.txt"))
+    print(loicDessin("ascii_art/ascii_art_nut.txt"))
     print("\n *************************************************************************************************************************** \n")
     print("Ce logiciel va d'abord scanner l'environemment dans lequel vous êtes, (adresse Mac, version Bluetooth, type d'appareil)")
     print("Pour ensuite vous proposer une liste des appareils Bluetooth dans la zone")
