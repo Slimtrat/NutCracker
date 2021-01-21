@@ -8,14 +8,21 @@ class AttaquesPossibles :
             print("Attaque",i+1,self.listeAttaquePossible[i])
 
 class Appareil :
-    def __init__(self,nom,versionBluetooth,adresseMac,type):
+    def __init__(self,nom,versionBluetooth,adresseMac,type,services=[],RSSI=0):
         self.nom=nom
         self.versionBluetooth=versionBluetooth
         self.adresseMac=adresseMac
         self.type=type
+        self.services=services
+        self.RSSI=RSSI
     def __str__(self):
-        return str("Appareil : "+self.nom+" \nType : "+self.type+"\nAdresse Mac : "+self.adresseMac+"\nVersion Bluetooth : "+str(self.versionBluetooth)+"\n")
-
+        a=str("Appareil : "+self.nom+" \nType : "+self.type+"\nAdresse Mac : "+self.adresseMac+"\nVersion Bluetooth : "+str(self.versionBluetooth)+"\n"+"Puissance :"+str(self.RSSI))
+        a+="\nServices :"
+        for i in self.services :
+            a+="\n"+str(i)
+        return a
+    def recuperation(self,liste):
+        return Appareil()
 class Attaque :
     def __init__ (self,nom,description,path) :
         self.nom=nom

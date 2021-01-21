@@ -9,8 +9,10 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
         self.done = False
 
     def device_discovered(self, address, device_class, rssi, name):
+        sortie=[]
+        sortie.append(address)
+        sortie.append(name)
         print("{} - {}".format(address, name))
-       
         major_classes = ("Miscellaneous",
                          "Computer",
                          "Phone",
@@ -23,7 +25,6 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
             print(" " + major_classes[major_class])
         else:
             print("  Uncategorized")
-
         print("  Services:")
         service_classes = ((16, "positioning"),
                            (17, "networking"),
@@ -33,11 +34,18 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
                            (21, "audio"),
                            (22, "telephony"),
                            (23, "information"))
-
+        temp=[]
         for bitpos, classname in service_classes:
             if device_class & (1 << (bitpos-1)):
                 print("   ", classname)
+                temp.append(classname)
+        sortie.append(temp)
+
         print("  RSSI:", rssi)
+        sortie.append(rssi)
+
+        for i in range(len(sortie)) :
+            print(sortie[i])
 
     def inquiry_complete(self):
         self.done = True
