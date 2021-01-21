@@ -1,6 +1,9 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 import os, sys
+import select
+import keyboard
+import bluetooth
 
 class AttaquesPossibles :
     def __init__(self,versionBluetooth,attaquePossible):
@@ -25,8 +28,16 @@ class Appareil :
         for i in self.services :
             a+="\n"+str(i)
         return a
-    def recuperation(self,liste):
-        return Appareil()
+    def recuperation(liste):
+        if len(liste)>0 :
+            adresse=liste[0]
+            nom=liste[1]
+            typ=liste[2]
+            service==liste[3]
+            Rssi=liste[4]
+            return Appareil(nom,1.4,adresse,typ,services,Rssi)
+        else :
+            return None 
 class Attaque :
     def __init__ (self,nom,description,path) :
         self.nom=nom
@@ -45,21 +56,34 @@ def loicDessin(path) :
 
 
 
-listeAppareil=[]
+
 
 def listeAppareilsDetectes() :
     import scan_btle as sc
-    a= sc.MyDiscoverer()
-    for i in a.devices :
-    	print(i)
-    return [Appareil("Telephone 1",1.4,"adresseMac","Tel",)]
+    d = sc.MyDiscoverer()
+    d.find_devices(lookup_names=True)
+
+    readfiles = [d, ]
+    compteur=0
+ 
+    while True:
+        rfds = select.select(readfiles, [], [])[0]
+ 
+        if d in rfds:
+            d.process_event()
+
+        if d.done:
+            return d.Affichage()
+
+        
+    
 
 def lancementAttaque(attaque,appareil):
     print("ouil")
     return "prout"
 
 listeAppareil=listeAppareilsDetectes()
-
+print(listeAppareil)
 
 listedesAttaquesAvecVersion=[]
 #Version 1.4

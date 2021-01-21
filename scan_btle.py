@@ -1,13 +1,17 @@
 import select
-
+import keyboard
 import bluetooth
 
 
 class MyDiscoverer(bluetooth.DeviceDiscoverer):
 
+    def Affichage(self) :
+        return self.devices
+
     def pre_inquiry(self):
         self.done = False
         self.devices=[]
+        
 
     def device_discovered(self, address, device_class, rssi, name):
         sortie=[]
@@ -44,23 +48,31 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
 
         print("  RSSI:", rssi)
         sortie.append(rssi)
-	if not sortie==[]:
-            devices.append(sortie)
+        import nut as nt
+        print(sortie)      
+        self.devices.append(nt.Appareil.recuperation(sortie))
+      
+            
 
     def inquiry_complete(self):
         self.done = True
 
 
-d = MyDiscoverer()
-d.find_devices(lookup_names=True)
+# d = MyDiscoverer()
+# d.find_devices(lookup_names=True)
 
-readfiles = [d, ]
+# readfiles = [d, ]
+# compteur=0
+# while True:
+#     rfds = select.select(readfiles, [], [])[0]
 
-while True:
-    rfds = select.select(readfiles, [], [])[0]
+#     if d in rfds:
+#         d.process_event()
 
-    if d in rfds:
-        d.process_event()
+#     if d.done:
+#         break
+#     compteur+=1
+#     print(compteur)
+#     if compteur==50 :
+#         break
 
-    if d.done:
-        break
