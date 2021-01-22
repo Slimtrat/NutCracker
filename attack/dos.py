@@ -12,8 +12,11 @@ def printLogo():
     print("SELETLI Delal")
 
 
-def main():
+def main(target_addr):
     printLogo()
+    if len(target_addr) < 1:
+        print('Erreur ! adresse cible manquante')
+        exit(0)
     time.sleep(0.1)
     print('')
     print("Ce programme se trouve etre dangereux et peut mettre en peril vos différents appareils et ne plus les faire fonctionner. Prenez cela en consideration avant de l'utiliser, nous ne sommes pas responsable de la moindre casse !")
@@ -23,11 +26,9 @@ def main():
         printLogo()
         print('')
 
-        target_addr = input('adresse MAC cible > ')
 
-        if len(target_addr) < 1:
-            print('Erreur ! adresse cible manquante')
-            exit(0)
+
+     
 
         try:
             packages_size = int(input('Taille du paquet > '))
@@ -60,10 +61,10 @@ def main():
         print('Au revoir')
         exit(0)
 
-if __name__ == '__main__':
+def use(adresseMac) :
     try:
         os.system('clear')
-        main()
+        main(adresseMac)
     except KeyboardInterrupt:
         time.sleep(0.1)
         print('\n[*] Abandonne')

@@ -111,28 +111,45 @@ def listeAppareilsDetectes() :
     d.find_devices()
 
     readfiles = [ d, ]
-
+    compteur=0
     while True:
+        compteur+=1
         rfds = select.select( readfiles, [], [] )[0]
 
         if d in rfds:
             d.process_event()
 
         if d.done: break
+        if compteur==50 : break
     return sortieFinal
     
 
 def lancementAttaque(attaque,appareil):
-    print("ouil")
-    return "prout"
+    if attaque.path.__contains__("dos") :
+        # import dos as des
+        import attack.dos as des
+        try :
+            des.use(appareil.adresseMac)
+        except Exception :
+            print("beug")
+    if attaque.path.__contains__("get_services") :
+        # import dos as des
+        import attack.get_services as get
+        try :
+            get.main(appareil.adresseMac)
+            if input("Do you want to attack ? (Y|N)") in ["Y","y"] :
+                __main__2(appareil)
+        except Exception :
+            print("beug")
 
 listeAppareil=listeAppareilsDetectes()
 
 listedesAttaquesAvecVersion=[]
 #Version 1.4
-attaque1_4__1=Attaque("DOS","Surcharge le port Bluetooth de requetes par notre appareil",None)
+attaque1_4__1=Attaque("DOS","Surcharge le port Bluetooth de requetes par notre appareil","attack/dos")
 attaque1_4__2=Attaque("BlueSnarf","Espionne les échanges Bluetooth de l'appareil",None)
-attaques1_4 = AttaquesPossibles(1.4, [attaque1_4__1,attaque1_4__2])
+attaque1_4__3=Attaque("Study","Analyse tous les ports de l'appareil et les affiches","attack/get_services")
+attaques1_4 = AttaquesPossibles(1.4, [attaque1_4__1,attaque1_4__2,attaque1_4__3])
 listedesAttaquesAvecVersion.append(attaques1_4)
 
 def Accueil() :
@@ -216,5 +233,12 @@ def __main__() :
     attaqueChoisi=displayAttack(appareilChoisi)
 
     confirmation(attaqueChoisi,appareilChoisi)
+
+def __main__2(appareil) :
+    if appareil==None :
+        return
+    attaque=displayAttack(appareil)
+
+    confirmation(attaque,appareil)
 
 __main__()
