@@ -51,6 +51,7 @@ class MyDiscoverer(bluetooth.DeviceDiscoverer):
         import nut as nt
         print(sortie)      
         self.devices.append(nt.Appareil.recuperation(sortie))
+
       
             
 

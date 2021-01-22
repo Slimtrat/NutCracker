@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os, sys
 import select
-import keyboard
 import bluetooth
 
 class AttaquesPossibles :
@@ -29,13 +28,13 @@ class Appareil :
             a+="\n"+str(i)
         return a
     def recuperation(liste):
-        if len(liste)>0 :
+        if len(liste)>=5 :
             adresse=liste[0]
-            nom=liste[1]
+            nom=str(liste[1],"UTF-8")
             typ=liste[2]
-            service==liste[3]
+            service=liste[3]
             Rssi=liste[4]
-            return Appareil(nom,1.4,adresse,typ,services,Rssi)
+            return Appareil(nom,1.4,adresse,typ,service,Rssi)
         else :
             return None 
 class Attaque :
@@ -59,23 +58,68 @@ def loicDessin(path) :
 
 
 def listeAppareilsDetectes() :
-    import scan_btle as sc
-    d = sc.MyDiscoverer()
-    d.find_devices(lookup_names=True)
+    sortieFinal=[]
+    class MyDiscoverer(bluetooth.DeviceDiscoverer):
+    
+        def pre_inquiry(self):
+            self.done = False
+         
+            
 
-    readfiles = [d, ]
-    compteur=0
- 
+        def device_discovered(self, address, device_class, rssi, name):
+            sortie=[]
+            sortie.append(address)
+            sortie.append(name)
+            print("{} - {}".format(address, name))
+            major_classes = ("Miscellaneous",
+                            "Computer",
+                            "Phone",
+                            "LAN/Network Access Point",
+                            "Audio/Video",
+                            "Peripheral",
+                            "Imaging")
+            major_class = (device_class >> 8) & 0xf
+            service_classes = ((16, "positioning"),
+                            (17, "networking"),
+                            (18, "rendering"),
+                            (19, "capturing"),
+                            (20, "object transfer"),
+                            (21, "audio"),
+                            (22, "telephony"),
+                            (23, "information"))
+            sortie.append(major_classes[major_class])
+            temp=[]
+            for bitpos, classname in service_classes:
+                if device_class & (1 << (bitpos-1)):
+                    temp.append(classname)
+            sortie.append(temp)
+
+            sortie.append(rssi)
+            appareilTemp=Appareil.recuperation(sortie)
+            print(appareilTemp)
+            if not sortieFinal.__contains__(appareilTemp) and appareilTemp!=None:   
+                sortieFinal.append(appareilTemp)
+                print("bien ajouté")
+            else :
+                print("déjà présent")
+
+
+        def inquiry_complete(self):
+            self.done = True
+
+    d = MyDiscoverer()
+    d.find_devices()
+
+    readfiles = [ d, ]
+
     while True:
-        rfds = select.select(readfiles, [], [])[0]
- 
+        rfds = select.select( readfiles, [], [] )[0]
+
         if d in rfds:
             d.process_event()
 
-        if d.done:
-            return d.Affichage()
-
-        
+        if d.done: break
+    return sortieFinal
     
 
 def lancementAttaque(attaque,appareil):
@@ -83,7 +127,6 @@ def lancementAttaque(attaque,appareil):
     return "prout"
 
 listeAppareil=listeAppareilsDetectes()
-print(listeAppareil)
 
 listedesAttaquesAvecVersion=[]
 #Version 1.4
@@ -101,9 +144,12 @@ def Accueil() :
     print("Ce logiciel va d'abord scanner l'environemment dans lequel vous êtes, (adresse Mac, version Bluetooth, type d'appareil)")
     print("Pour ensuite vous proposer une liste des appareils Bluetooth dans la zone")
     print("Vous pourrez alors choisir un des appareils, et une liste d'attaque sera alors affiché en fonction de sa version Bluetooth..")
+    print("%%%%%%%%%%%%%%%%%%")
+    print()
     for i in range(len(listeAppareil)) :
-        print("Appareil",i+1,":",listeAppareil[i].nom)
-        print()
+        if listeAppareil[i]!=None :
+            print("Appareil",i+1,":",listeAppareil[i].nom)
+            print()
     print("Veuilez choisir un des appareils ci dessus en mettant le numéro correspondant, exit pour sortir")
     w = input().replace(" ","")
     if w == "exit":
@@ -120,6 +166,8 @@ def Accueil() :
 def rechercheAttaque(versionBluetooth) :
     for i in range (len(listedesAttaquesAvecVersion)) :
         if listedesAttaquesAvecVersion[i].versionBluetooth==versionBluetooth :
+            print("***********")
+            print("***********")
             print("Des attaques sont disponibles")
             return listedesAttaquesAvecVersion[i]
     print("Aucune attaque disponible pour cette version Bluetooth")
@@ -127,6 +175,8 @@ def rechercheAttaque(versionBluetooth) :
 
 
 def confirmation(attaque,appareil) :
+    print("***********")
+    print("***********")
     boolean =input("Etes vous sûre de vouloir lancer l'attaque ? (Y/N)")
     if boolean=="Y" :
         lancementAttaque(attaque,appareil)
@@ -136,11 +186,18 @@ def confirmation(attaque,appareil) :
 
 def displayAttack (appareil) :
     attaqueX=rechercheAttaque(appareil.versionBluetooth)
+    print("***********")
+    print("***********")
     print("Appareil attaqué")
+    print("***********")
     print(appareil)
+    print("***********")
+    print("***********")
     print("Liste des attaques possibles pour cet appareil")
+    print("%%%%%%%%%%%%%")
     for i in range(len(attaqueX.listeAttaquePossible)) :
         print("Attaque",i+1,":",attaqueX.listeAttaquePossible[i])
+        print("%%%%%%%%%%%%%")
     print("Veuillez entrer le numéro correspondant à l'attaque choisie, exit pour revenir à l'accueil")
     w=input()
     if w=="exit" : __main__()
