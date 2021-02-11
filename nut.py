@@ -27,6 +27,8 @@ class Appareil :
         for i in self.services :
             a+="\n"+str(i)
         return a
+    def __eq__(self, other):
+        return self.nom==other.nom
     def recuperation(liste):
         if len(liste)>=5 :
             adresse=liste[0]
