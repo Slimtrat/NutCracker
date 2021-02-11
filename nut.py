@@ -28,7 +28,19 @@ class Appareil :
             a+="\n"+str(i)
         return a
     def __eq__(self, other):
-        return self.nom==other.nom
+        if other is Appareil :
+            return self.nom==Appareil(other).nom
+        else :
+            return False
+
+    def __contains__(self,liste) :
+        sortie=[]
+        for x in liste :
+            if x is Appareil :
+                sortie.append(Appareil(x).adresseMac)
+        return sortie.__contains__(self.adresseMac)
+
+
     def recuperation(liste):
         if len(liste)>=5 :
             adresse=liste[0]
@@ -115,6 +127,7 @@ def listeAppareilsDetectes() :
     readfiles = [ d, ]
     compteur=0
     while True:
+        print("...")
         compteur+=1
         rfds = select.select( readfiles, [], [] )[0]
 
@@ -122,11 +135,19 @@ def listeAppareilsDetectes() :
             d.process_event()
 
         if d.done: break
-        if compteur==50 : break
+        if compteur==10 : break
     return sortieFinal
     
 
 def lancementAttaque(attaque,appareil):
+    if attaque.path.__contains__("hijack") :
+
+        import attack.hijack as hi
+        try :
+            hi.HiJackAudio(appareil.adresseMac)
+        except Exception as e:
+            print(e)
+
     if attaque.path.__contains__("dos") :
         # import dos as des
         import attack.dos as des
@@ -151,7 +172,8 @@ listedesAttaquesAvecVersion=[]
 attaque1_4__1=Attaque("DOS","Surcharge le port Bluetooth de requetes par notre appareil","attack/dos")
 attaque1_4__2=Attaque("BlueSnarf","Espionne les échanges Bluetooth de l'appareil",None)
 attaque1_4__3=Attaque("Study","Analyse tous les ports de l'appareil et les affiches","attack/get_services")
-attaques1_4 = AttaquesPossibles(1.4, [attaque1_4__1,attaque1_4__2,attaque1_4__3])
+attaque1_4__4=Attaque("Hi Jack","Surcharge l'écoute de la cible en lui imposant une mélodie de votre choix","attack/hijack")
+attaques1_4 = AttaquesPossibles(1.4, [attaque1_4__1,attaque1_4__2,attaque1_4__3,attaque1_4__4])
 listedesAttaquesAvecVersion.append(attaques1_4)
 
 def Accueil() :
@@ -229,6 +251,7 @@ def displayAttack (appareil) :
             return displayAttack(appareil)
 
 def __main__() :
+    print("Recherche des appareils en cours...")
     appareilChoisi=Accueil()
     if appareilChoisi==None :
         return
@@ -237,6 +260,7 @@ def __main__() :
     confirmation(attaqueChoisi,appareilChoisi)
 
 def __main__2(appareil) :
+    
     if appareil==None :
         return
     attaque=displayAttack(appareil)
