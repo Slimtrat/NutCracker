@@ -3,6 +3,7 @@
 import os, sys
 import select
 import bluetooth
+import time
 
 class AttaquesPossibles :
     def __init__(self,versionBluetooth,attaquePossible):
@@ -144,6 +145,8 @@ def lancementAttaque(attaque,appareil):
 
         import attack.hijack as hi
         try :
+            hi.connect(appareil.adresseMac)
+            time.sleep(5)
             hi.HiJackAudio(appareil.adresseMac)
         except Exception as e:
             print(e)
