@@ -39,7 +39,7 @@ class log :
         try:
             conn = sqlite3.connect('log.db')
             cur = conn.cursor()
-            sql = "INSERT INTO logs (date,nomAttaque ,aFonctionne,commentaire,nomAppareil,versionBluetooth) VALUES("+self.hour+","+self.nomattaque+","+self.aFonctionner+","+self.commentaire+","+self.appareil.nom+","+self.appareil.versionBluetooth+")"
+            sql = "INSERT INTO logs (date,nomAttaque ,aFonctionne,commentaire,nomAppareil,versionBluetooth) VALUES("+str(self.hour)+","+str(self.nomattaque)+","+str(self.aFonctionner)+","+str(self.commentaire)+","+str(self.appareil.nom)+","+str(self.appareil.versionBluetooth)+")"
             cur.execute(sql)
             res = cur.fetchall()
             print("La version de SQLite est: ", res)
