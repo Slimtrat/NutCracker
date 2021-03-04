@@ -222,7 +222,7 @@ def lancementAttaque(attaque,appareil):
 
         except Exception :
             print("beug")
-    if input("Do you want to log it ? (Y|N)") in ["Y,y"] :
+    if input("Do you want to log it ? (Y|N)") in ["Y","y"] :
         afonctionner=input("Did your attack work ? (Yes/No)")
         commentaire=input("Have you some comments ? Explain it as a answer")
         aloger = log(attaque.nom, appareil, commentaire, afonctionner)
