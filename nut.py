@@ -49,8 +49,9 @@ class log :
             print("La connexion SQLite est fermée")
         except sqlite3.Error as error:
             print("Erreur lors de la connexion à SQLite", error)
-    def printBDD():
-        import sqlite3
+def printBDD():
+    import sqlite3
+    try :
         conn = sqlite3.connect('log.db')
         curseur = conn.cursor()
         curseur.execute("SELECT * from logs")
@@ -58,6 +59,8 @@ class log :
         while result:
             print(result)
             result = curseur.fetchone()
+    except :
+        print("Table vide ou inexistante")
 
 class AttaquesPossibles :
     def __init__(self,versionBluetooth,attaquePossible):
@@ -260,7 +263,7 @@ def Accueil() :
     if w == "exit":
         return None
     if w == "log":
-        log.printBDD()
+        printBDD()
         if input("Voulez vous revenir à l'accueil ?") in ["Y","y"] :
             return Accueil()
     else:
