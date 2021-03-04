@@ -18,8 +18,8 @@ class log :
         if not (self.dejaCree) :
             try:
                 conn = sqlite3.connect('log.db')
-                sql = "CREATE TABLE logs (" \
-                      "id INT PRIMARY KEY NOT NULL AUTO_INCREMENT," \
+                sql = "CREATE TABLE IF NOT EXISTS 'logs' (" \
+                      "id INT PRIMARY KEY NOT NULL AUTOINCREMENT," \
                       "date TEXT NOT NULL," \
                       "nomAttaque TEXT NOT NULL" \
                       "aFonctionne TEXT NOT NULL" \
