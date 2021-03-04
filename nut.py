@@ -5,6 +5,60 @@ import select
 import bluetooth
 import time
 
+class log :
+    def __init__(self,nomattaque,appareil,commentaire,afonctionner):
+        self.nomattaque=nomattaque
+        self.appareil=appareil
+        self.commentaire=commentaire
+        self.hour=time.time()
+        self.dejaCree=False
+        self.aFonctionner=afonctionner
+    def ajoutBDD(self):
+        import sqlite3
+        if not (self.dejaCree) :
+            try:
+                conn = sqlite3.connect('log.db')
+                cur = conn.cursor()
+                sql = "CREATE TABLE [IF NOT EXISTS] Logs (" \
+                      "id INT PRIMARY KEY AUTO_INCREMENT," \
+                      "date TEXT NOT NULL," \
+                      "nomAttaque TEXT NOT NULL" \
+                      "aFonctionne TEXT NOT NULL" \
+                      "commentaire TEXT" \
+                      "nomAppareil TEXT NOT NULL" \
+                      "versionBluetooth TEXT NOT NULL"
+                cur.execute(sql)
+                res = cur.fetchall()
+                print("Table crée")
+                cur.close()
+                conn.commit()
+                conn.close()
+                self.dejaCree=True
+            except sqlite3.Error as error:
+                print("Erreur lors de la connexion à SQLite", error)
+        try:
+            conn = sqlite3.connect('log.db')
+            cur = conn.cursor()
+            sql = "INSERT INTO logs (date,nomAttaque ,aFonctionne,commentaire,nomAppareil,versionBluetooth) VALUES("+self.hour+","+self.nomattaque+","+self.aFonctionner+","+self.commentaire+","+self.appareil.nom+","+self.appareil.versionBluetooth+")"
+            cur.execute(sql)
+            res = cur.fetchall()
+            print("La version de SQLite est: ", res)
+            cur.close()
+            conn.commit()
+            conn.close()
+            print("La connexion SQLite est fermée")
+        except sqlite3.Error as error:
+            print("Erreur lors de la connexion à SQLite", error)
+    def printBDD(self):
+        import sqlite3
+        conn = sqlite3.connect('log.db')
+        curseur = conn.cursor()
+        curseur.execute("SELECT * from logs")
+        result = curseur.fetchone()
+        while result:
+            print(result)
+            result = curseur.fetchone()
+
 class AttaquesPossibles :
     def __init__(self,versionBluetooth,attaquePossible):
         self.versionBluetooth=versionBluetooth #C'est un float, voir s'il faudrait un string plutot, par exemple plusieurs points
@@ -165,8 +219,14 @@ def lancementAttaque(attaque,appareil):
             get.main(appareil.adresseMac)
             if input("Do you want to attack ? (Y|N)") in ["Y","y"] :
                 __main__2(appareil)
+
         except Exception :
             print("beug")
+    if input("Do you want to log it ? (Y|N)") in ["Y,y"] :
+        afonctionner=input("Did your attack work ? (Yes/No)")
+        commentaire=input("Have you some comments ? Explain it as a answer")
+        aloger = log(attaque.nom, appareil, commentaire, afonctionner)
+        aloger.ajoutBDD()
 
 listeAppareil=listeAppareilsDetectes()
 
@@ -195,9 +255,14 @@ def Accueil() :
             print("Appareil",i+1,":",listeAppareil[i].nom)
             print()
     print("Veuilez choisir un des appareils ci dessus en mettant le numéro correspondant, exit pour sortir")
+    print("Vous pouvez aussi choisir de voir les logs, en tappant 'log'")
     w = input().replace(" ","")
     if w == "exit":
         return None
+    if w == "log":
+        log.printBDD()
+        if input("Voulez vous revenir à l'accueil ?") in ["Y","y"] :
+            return Accueil()
     else:
         try:
             return listeAppareil[int(w) - 1]
