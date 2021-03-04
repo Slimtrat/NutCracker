@@ -4,13 +4,14 @@ import os, sys
 import select
 import bluetooth
 import time
+from datetime import datetime
 
 class log :
     def __init__(self,nomattaque,appareil,commentaire,afonctionner):
         self.nomattaque=nomattaque
         self.appareil=appareil
         self.commentaire=commentaire
-        self.hour=time.time()
+        self.hour=datetime.now().strftime("%d/%m/%y %H:%M:%S")
         self.dejaCree=False
         self.aFonctionner=afonctionner
     def ajoutBDD(self):
@@ -19,13 +20,13 @@ class log :
             try:
                 conn = sqlite3.connect('log.db')
                 sql = "CREATE TABLE IF NOT EXISTS 'logs' (" \
-                      "id INT PRIMARY KEY NOT NULL AUTOINCREMENT," \
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                       "date TEXT NOT NULL," \
-                      "nomAttaque TEXT NOT NULL" \
-                      "aFonctionne TEXT NOT NULL" \
-                      "commentaire TEXT" \
-                      "nomAppareil TEXT NOT NULL" \
-                      "versionBluetooth TEXT NOT NULL"
+                      "nomAttaque TEXT NOT NULL," \
+                      "aFonctionne TEXT NOT NULL," \
+                      "commentaire TEXT," \
+                      "nomAppareil TEXT NOT NULL," \
+                      "versionBluetooth TEXT NOT NULL);"
                 conn.execute(sql)
                 print("Table crée")
                 conn.commit()
@@ -36,7 +37,8 @@ class log :
         try:
             conn = sqlite3.connect('log.db')
             cur = conn.cursor()
-            sql = "INSERT INTO logs (date,nomAttaque ,aFonctionne,commentaire,nomAppareil,versionBluetooth) VALUES('"+str(self.hour)+"','"+str(self.nomattaque)+"','"+str(self.aFonctionner)+"','"+str(self.commentaire)+"','"+str(self.appareil.nom)+"','"+str(self.appareil.versionBluetooth)+"')"
+            sql = "INSERT INTO logs (date,nomAttaque ,aFonctionne,commentaire,nomAppareil,versionBluetooth) VALUES('"+str(self.hour)+"','"+str(self.nomattaque)+"','"+str(self.aFonctionner)+"','"+str(self.commentaire)+"','"+str(self.appareil.nom)+"','"+str(self.appareil.versionBluetooth)+"');"
+            print(sql)
             cur.execute(sql)
             cur.close()
             conn.commit()
