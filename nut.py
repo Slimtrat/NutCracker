@@ -49,7 +49,7 @@ class log :
             print("La connexion SQLite est fermée")
         except sqlite3.Error as error:
             print("Erreur lors de la connexion à SQLite", error)
-    def printBDD(self):
+    def printBDD():
         import sqlite3
         conn = sqlite3.connect('log.db')
         curseur = conn.cursor()
