@@ -19,7 +19,7 @@ class log :
             try:
                 conn = sqlite3.connect('log.db')
                 sql = "CREATE TABLE logs (" \
-                      "id INT PRIMARY KEY AUTO_INCREMENT," \
+                      "id INT PRIMARY KEY NOT NULL AUTO_INCREMENT," \
                       "date TEXT NOT NULL," \
                       "nomAttaque TEXT NOT NULL" \
                       "aFonctionne TEXT NOT NULL" \
